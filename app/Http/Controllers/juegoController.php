@@ -94,7 +94,43 @@ class juegoController extends Controller
      */
     public function show($id)
     {
-        //
+        $query = "select a.id_solicitud, a.user_emisor oponente, a.nombre_emisor nom_oponente, a.pemis puntos_oponente, a.gana_emisor gana_oponente , a.precep mis_puntos, a.gana_receptor mis_ganadas from (select b.id idsolicitud,b.id_user_emisor user_emisor,emisor.name nombre_emisor,b.id_user_receptor user_receptor,receptor.name nombre_receptor, juegpar.*
+                from solicitudes b
+                inner join users emisor on emisor.id = b.id_user_emisor and b.estado = 'enviada'
+                inner join users receptor on receptor.id = b.id_user_receptor  and b.estado = 'enviada'
+                inner join (select 
+                a.id,a.id_solicitud, sum(b.puntos_receptor) precep, sum(b.puntos_emisor) pemis,
+                sum(case when b.puntos_receptor > b.puntos_emisor then 1 when b.puntos_emisor > b.puntos_receptor then 0 end) gana_receptor,
+                sum(case when b.puntos_receptor < b.puntos_emisor then 1 when b.puntos_emisor < b.puntos_receptor then 0 end) gana_emisor
+                from juegos a
+                inner join partidas b on a.id = b.id_juego and b.estado = 'iniciada'
+                where b.puntos_receptor <> b.puntos_emisor
+                group by a.id
+                order by a.id,b.id) juegpar on juegpar.id_solicitud = b.id
+                where emisor.id = ".$id." or receptor.id = ".$id.") a
+                where a.user_receptor = ".$id."
+                
+                union all
+                
+                select a.id_solicitud, a.user_receptor oponente, a.nombre_receptor nom_oponente, a.precep puntos_oponente, a.gana_receptor gana_oponente , a.pemis mis_puntos, a.gana_emisor mis_ganadas from (select b.id idsolicitud,b.id_user_emisor user_emisor,emisor.name nombre_emisor,b.id_user_receptor user_receptor,receptor.name nombre_receptor, juegpar.*
+                from solicitudes b
+                inner join users emisor on emisor.id = b.id_user_emisor and b.estado = 'enviada'
+                inner join users receptor on receptor.id = b.id_user_receptor  and b.estado = 'enviada'
+                inner join (select 
+                a.id,a.id_solicitud, sum(b.puntos_receptor) precep, sum(b.puntos_emisor) pemis,
+                sum(case when b.puntos_receptor > b.puntos_emisor then 1 when b.puntos_emisor > b.puntos_receptor then 0 end) gana_receptor,
+                sum(case when b.puntos_receptor < b.puntos_emisor then 1 when b.puntos_emisor < b.puntos_receptor then 0 end) gana_emisor
+                from juegos a
+                inner join partidas b on a.id = b.id_juego and b.estado = 'iniciada'
+                where b.puntos_receptor <> b.puntos_emisor
+                group by a.id
+                order by a.id,b.id) juegpar on juegpar.id_solicitud = b.id
+                where emisor.id = ".$id." or receptor.id = ".$id.") a
+                where a.user_emisor = ".$id;
+                    
+        $juegos = DB::select($query);
+        
+        return response($juegos)->header('Access-Control-Allow-Origin','*');
     }
 
     /**
