@@ -14,3 +14,8 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::resource('juego','juegoController');
+Route::resource('partida','partidaController');
+Route::resource('solicitud','solicitudController');
+Route::resource('user','userController');
