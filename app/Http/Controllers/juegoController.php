@@ -15,7 +15,54 @@ class juegoController extends Controller
      */
     public function index()
     {
-        //
+        $query = "select * from (
+                select a.user, a.nombre,sum(a.ganados) ganados,sum(a.puntos) puntos from (
+                select x.user_emisor user, x.nombre_emisor nombre, x.pemisor puntos, x.gana_emisor ganados from
+                (select b.id_user_emisor user_emisor,emisor.name nombre_emisor,b.id_user_receptor user_receptor,receptor.name nombre_receptor,sum(juegospar.precep) preceptor,sum(juegospar.pemis) pemisor,
+                
+                sum(case when juegospar.gana_emisor > juegospar.gana_receptor then 1 else 0 end) gana_emisor,
+                sum(case when juegospar.gana_emisor < juegospar.gana_receptor then 1 else 0 end) gana_receptor
+                
+                from solicitudes b
+                inner join users emisor on emisor.id = b.id_user_emisor and b.estado = 'enviada'
+                inner join users receptor on receptor.id = b.id_user_receptor and b.estado = 'enviada'
+                inner join (select 
+                a.id,a.id_solicitud, sum(b.puntos_receptor) precep, sum(b.puntos_emisor) pemis,
+                sum(case when b.puntos_receptor > b.puntos_emisor then 1 when b.puntos_emisor > b.puntos_receptor then 0 end) gana_receptor,
+                sum(case when b.puntos_receptor < b.puntos_emisor then 1 when b.puntos_emisor < b.puntos_receptor then 0 end) gana_emisor
+                from juegos a
+                inner join partidas b on a.id = b.id_juego and b.estado = 'iniciada'
+                where b.puntos_receptor <> b.puntos_emisor
+                group by a.id
+                order by a.id,b.id) juegospar on juegospar.id_solicitud = b.id
+                group by b.id_user_emisor,b.id_user_receptor) x
+                
+                union all
+                
+                select y.user_receptor user, y.nombre_receptor nombre, y.preceptor puntos, y.gana_receptor ganados from
+                (select b.id_user_emisor user_emisor,emisor.name nombre_emisor,b.id_user_receptor user_receptor,receptor.name nombre_receptor,sum(juegospar.precep) preceptor,sum(juegospar.pemis) pemisor,
+                
+                sum(case when juegospar.gana_emisor > juegospar.gana_receptor then 1 else 0 end) gana_emisor,
+                sum(case when juegospar.gana_emisor < juegospar.gana_receptor then 1 else 0 end) gana_receptor
+                
+                from solicitudes b
+                inner join users emisor on emisor.id = b.id_user_emisor and b.estado = 'enviada'
+                inner join users receptor on receptor.id = b.id_user_receptor and b.estado = 'enviada'
+                inner join (select 
+                a.id,a.id_solicitud, sum(b.puntos_receptor) precep, sum(b.puntos_emisor) pemis,
+                sum(case when b.puntos_receptor > b.puntos_emisor then 1 when b.puntos_emisor > b.puntos_receptor then 0 end) gana_receptor,
+                sum(case when b.puntos_receptor < b.puntos_emisor then 1 when b.puntos_emisor < b.puntos_receptor then 0 end) gana_emisor
+                from juegos a
+                inner join partidas b on a.id = b.id_juego and b.estado = 'iniciada'
+                where b.puntos_receptor <> b.puntos_emisor
+                group by a.id
+                order by a.id,b.id) juegospar on juegospar.id_solicitud = b.id
+                group by b.id_user_emisor,b.id_user_receptor) y ) a
+                group by a.user) b order by ganados desc";
+                    
+        $honor = DB::select($query);
+        
+        return response($honor)->header('Access-Control-Allow-Origin','*');
     }
 
     /**
