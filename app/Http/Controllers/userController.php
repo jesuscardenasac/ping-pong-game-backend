@@ -13,9 +13,19 @@ class userController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $user = User::where(['email' => $request->email ])->get();
+        
+        if($user->count() > 0) {
+            if(Hash::check($request->password, $user->first()->password)) {
+                return response(json_encode(["estado"=>"ok","msj"=>"login correcto"]))->header('Access-Control-Allow-Origin','*'); 
+            } else {
+                return response(json_encode(["estado"=>"fail","msj"=>"login incorrecto"]))->header('Access-Control-Allow-Origin','*');    
+            }
+        }else {
+             return response(json_encode(["estado"=>"fail","msj"=>"login incorrecto"]))->header('Access-Control-Allow-Origin','*');                
+        }
     }
 
     /**
@@ -36,7 +46,8 @@ class userController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = User::create(['name' => $request->name, 'email' => $request->email, 'password' => Hash::make($request->password), 'remember_token' => str_random(10)]);
+        return response($user)->header('Access-Control-Allow-Origin','*');
     }
 
     /**
