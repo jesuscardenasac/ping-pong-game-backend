@@ -8,6 +8,8 @@ use App\Http\Requests;
 
 use App\User;
 
+use Illuminate\Support\Facades\Hash;
+
 class userController extends Controller
 {
     /**
