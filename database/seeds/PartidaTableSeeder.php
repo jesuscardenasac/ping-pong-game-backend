@@ -11,6 +11,6 @@ class PartidaTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(App\Models\Partida::class, 20)->create();
     }
 }
