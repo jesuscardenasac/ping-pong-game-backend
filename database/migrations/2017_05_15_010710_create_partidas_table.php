@@ -12,7 +12,12 @@ class CreatePartidasTable extends Migration
      */
     public function up()
     {
-        //
+        $table->increments('id');
+        $table->integer('id_juego');
+        $table->integer('puntos_receptor');
+        $table->integer('puntos_emisor');
+        $table->string('estado');
+        $table->timestamps();
     }
 
     /**
@@ -22,6 +27,6 @@ class CreatePartidasTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('partidas');
     }
 }
