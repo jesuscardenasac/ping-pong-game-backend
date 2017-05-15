@@ -12,7 +12,11 @@ class CreateJuegosTable extends Migration
      */
     public function up()
     {
-        //
+        Schema::create('juegos', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('id_solicitud');
+            $table->integer('estado');
+        });
     }
 
     /**
@@ -22,6 +26,6 @@ class CreateJuegosTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('juegos');
     }
 }
