@@ -12,12 +12,14 @@ class CreatePartidasTable extends Migration
      */
     public function up()
     {
-        $table->increments('id');
-        $table->integer('id_juego');
-        $table->integer('puntos_receptor');
-        $table->integer('puntos_emisor');
-        $table->string('estado');
-        $table->timestamps();
+        Schema::create('partidas', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('id_juego');
+            $table->integer('puntos_receptor');
+            $table->integer('puntos_emisor');
+            $table->string('estado');
+            $table->timestamps();
+        });
     }
 
     /**
