@@ -11,6 +11,6 @@ class SolicitudesTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(App\Models\Solicitud::class, 10)->create();
     }
 }
