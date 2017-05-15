@@ -19,3 +19,27 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'remember_token' => str_random(10),
     ];
 });
+
+$factory->define(App\Models\Solicitud::class, function (Faker\Generator $faker) {
+    return [
+        'id_user_emisor' => $faker->numberBetween($min = 1, $max = 10),
+        'id_user_receptor' => $faker->numberBetween($min = 1, $max = 10),
+        'estado' => 'enviada',
+    ];
+});
+
+$factory->define(App\Models\Juego::class, function (Faker\Generator $faker) {
+    return [
+        'id_solicitud' => $faker->numberBetween($min = 1, $max = 10),
+        'estado' => 'iniciado',
+    ];
+});
+
+$factory->define(App\Models\Partida::class, function (Faker\Generator $faker) {
+    return [
+        'id_juego' => $faker->numberBetween($min = 1, $max = 10),
+        'puntos_emisor' => $faker->numberBetween($min = 1, $max = 10),
+        'puntos_receptor' => $faker->numberBetween($min = 1, $max = 10),
+        'estado' => 'iniciada',
+    ];
+});
